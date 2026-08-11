@@ -54,5 +54,4 @@ public static class AddressMapping
         entity.UpdatedBy = dto.UpdatedBy;
         entity.UpdatedDate = dto.UpdatedDate;
     }
-
 }

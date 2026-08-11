@@ -2,9 +2,9 @@ using System.ComponentModel.DataAnnotations;
 
 namespace eGift.WebAPI.Dtos;
 public record EditSubCategoryDto(
-    [Required] int Id,
+    int Id,
     [Required] int CategoryId,
-    string SubCategoryName,
+    [Required] string SubCategoryName,
     string? Description,
     bool IsDeleted,
     int UpdatedBy,
