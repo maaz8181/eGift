@@ -1,4 +1,10 @@
-namespace eGift.WebAPI.Enums;
+namespace eGift.WebAPI.Common;
+
+public enum RefType
+{
+    Employee = 1,
+    Customer = 2
+};
 
 public enum Size
 {
@@ -9,4 +15,4 @@ public enum Size
     XL = 5,
     XXL = 6,
     XXXL = 7
-}
+};

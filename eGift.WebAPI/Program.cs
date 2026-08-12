@@ -26,6 +26,7 @@ if (app.Environment.IsDevelopment())
 app.UseHttpsRedirection();
 
 // Use API key middleware
+app.UseMiddleware<DefaultEmployeeMiddleware>();
 app.UseMiddleware<ApiKeyMiddleware>();
 
 // Map endpoints
