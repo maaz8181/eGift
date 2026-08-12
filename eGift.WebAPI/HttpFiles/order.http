@@ -1,0 +1,68 @@
+@eGift_HostOrder = http://localhost:5270
+@APIKey = n62p2wjy26ro0qy54n8o7kbiwho4nm9g
+
+###
+
+GET {{eGift_HostOrder}}/api/order
+Accept: application/json
+X-API-Key: {{APIKey}}
+
+###
+
+GET {{eGift_HostOrder}}/api/order/4
+Accept: application/json
+X-API-Key: {{APIKey}}
+
+###
+
+POST {{eGift_HostOrder}}/api/order
+Content-Type: application/json
+X-API-Key: {{APIKey}}
+
+{
+  "id": 0,
+  "customerId": 1,
+  "totalAmount": 5000.00,
+  "totalDiscount": 100.00,
+  "totalTax": 270.00,
+  "orderNumber": "ORD-2026-002",
+  "notes": "Test order",
+  "dispatchedDate": null,
+  "shippedDate": null,
+  "deliveryDate": null,
+  "cancelDate": null,
+  "statusId": 1,
+  "isDeleted": false,
+  "createdBy": 1,
+  "createdDate": "2026-08-11T00:00:00"
+}
+
+###
+
+PUT {{eGift_HostOrder}}/api/order/1
+Content-Type: application/json
+X-API-Key: {{APIKey}}
+
+{
+  "id": 1,
+  "customerId": 10,
+  "totalAmount": 2000.00,
+  "totalDiscount": 150.00,
+  "totalTax": 360.00,
+  "orderNumber": "ORD-2026-001",
+  "notes": "Updated test order",
+  "dispatchedDate": null,
+  "shippedDate": null,
+  "deliveryDate": null,
+  "cancelDate": null,
+  "statusId": 1,
+  "isDeleted": false,
+  "updatedBy": 1,
+  "updatedDate": "2026-08-11T00:00:00"
+}
+
+###
+
+DELETE {{eGift_HostOrder}}/api/order/2?loginUserId=1&deletedDate=2026-08-11
+Accept: application/json
+X-API-Key: {{APIKey}}
