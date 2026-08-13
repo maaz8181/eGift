@@ -1,5 +1,6 @@
 using eGift.WebAPI.Data;
 using eGift.WebAPI.Dtos;
+using eGift.WebAPI.Helpers;
 using eGift.WebAPI.Mappings;
 using Microsoft.EntityFrameworkCore;
 
@@ -112,7 +113,7 @@ public static class LoginEndpoint
         });
 
         // POST: api/login
-        group.MapPost("/", async (LoginDto dto, AppDBContext context,  ILoggerFactory loggerFactory) =>
+        group.MapPost("/", async (LoginDto dto, AppDBContext context, ILoggerFactory loggerFactory) =>
         {
             var logger = loggerFactory.CreateLogger("LoginEndpoint");
 
@@ -187,7 +188,7 @@ public static class LoginEndpoint
         });
 
         // DELETE: api/login/{id}?loginUserId={loginUserId}&deletedDate={deletedDate}
-        group.MapDelete("/{id:int}", async ( int id, int loginUserId, DateTime deletedDate, AppDBContext context,  ILoggerFactory loggerFactory) =>
+        group.MapDelete("/{id:int}", async (int id, int loginUserId, DateTime deletedDate, AppDBContext context, ILoggerFactory loggerFactory) =>
         {
             var logger = loggerFactory.CreateLogger("LoginEndpoint");
 
@@ -230,6 +231,84 @@ public static class LoginEndpoint
 
         #endregion
 
+        #region Login Employee Endpoints
+        // GET: api/login/employee
+        group.MapGet("/employee", async (string userName, string password, AppDBContext context, ILoggerFactory loggerFactory) =>
+        {
+            var logger = loggerFactory.CreateLogger("LoginEndpoint");
+
+            try
+            {
+                var employeeLogin = await context.Logins.Where(x => x.UserName == userName && !x.IsDeleted).FirstOrDefaultAsync();
+
+                if (employeeLogin == null)
+                {
+                    return Results.Json(
+                        new
+                        {
+                            Message = $"Employee doesn't exist."
+                        },
+                        statusCode: StatusCodes.Status404NotFound
+                    );
+                }
+                else if (!employeeLogin.IsActive)
+                {
+                    return Results.Json(
+                        new
+                        {
+                            Message = $"Employee is not active.",
+                        },
+                        statusCode: StatusCodes.Status200OK
+                    );
+                }
+
+                var isValid = PasswordHelper.VerifyPassword(password, employeeLogin.Password);
+
+                if (!isValid)
+                {
+                    return Results.Json(
+                        new
+                        {
+                            Message = $"Username or password invalid.",
+                        },
+                        statusCode: StatusCodes.Status200OK
+                    );
+                }
+                else
+                {
+                    employeeLogin.LastLoginDate = employeeLogin.LogInDate;
+                    employeeLogin.LogInDate= DateTime.Now;
+
+                    context.Logins.Update(employeeLogin);
+                    await context.SaveChangesAsync();
+                }
+
+                return Results.Ok(new
+                {
+                    Message = "Login successfully.",
+                    UserId = employeeLogin.RefId,
+                    UserName = employeeLogin.UserName,
+                    RoleId = employeeLogin.RoleId
+                });
+            }
+            catch (Exception ex)
+            {
+                logger.LogError(
+                    "Exception in LoginEndpoint: /api/login/employee GET: {Message}.",
+                    ex.Message
+                );
+
+                return Results.Json(
+                    new
+                    {
+                        Message = $"An error occurred while the login employee with username {userName}.",
+                        error = ex.Message
+                    },
+                    statusCode: StatusCodes.Status500InternalServerError
+                );
+            }
+        });
+        #endregion
         return group;
     }
 }
