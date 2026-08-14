@@ -61,6 +61,13 @@ public class AccountController : Controller
                 return View("Index", model);
             }
 
+            // Session values
+            HttpContext.Session.SetInt32("UserId", response.UserId);
+
+            HttpContext.Session.SetString("UserName", response.UserName);
+
+            HttpContext.Session.SetInt32("RoleId", response.RoleId);
+
             // Login successful
             return RedirectToAction("Index", "Home");
         }
@@ -70,6 +77,16 @@ public class AccountController : Controller
             _logger.LogError("Exception in AccountController Login: {Message}", ex.Message);
         }
         return View("Index", model);
+    }
+    #endregion
+
+    #region Logout Actions
+    [HttpPost]
+    public IActionResult Logout()
+    {
+        HttpContext.Session.Clear();
+
+        return RedirectToAction("Index", "Account");
     }
     #endregion
 }
