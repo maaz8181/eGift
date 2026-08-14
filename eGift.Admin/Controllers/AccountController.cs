@@ -1,3 +1,4 @@
+using eGift.Admin.Common;
 using eGift.Admin.Helpers;
 using eGift.Admin.Models.ResponseViewModel;
 using eGift.Admin.Models.ViewModels;
@@ -52,6 +53,9 @@ public class AccountController : Controller
                     string.Empty,
                     "Unable to login.");
 
+                TempData["ToastrType"] = ToastrType.Error.ToString();
+                TempData["ToastMessage"] = "Unable to login.";
+
                 return View("Index", model);
             }
 
@@ -60,6 +64,9 @@ public class AccountController : Controller
                 ModelState.AddModelError(
                     string.Empty,
                     response.Message);
+
+                TempData["ToastrType"] = ToastrType.Error.ToString();
+                TempData["ToastMessage"] = response.Message;
 
                 return View("Index", model);
             }
@@ -71,6 +78,9 @@ public class AccountController : Controller
 
             HttpContext.Session.SetInt32("RoleId", response.RoleId);
 
+            TempData["ToastrType"] = ToastrType.Success.ToString();
+            TempData["ToastMessage"] = response.Message;
+
             // Login successful
             return RedirectToAction("Index", "Home");
         }
@@ -78,6 +88,9 @@ public class AccountController : Controller
         {
             // TODO: Log exception 
             _logger.LogError("Exception in AccountController Login: {Message}", ex.Message);
+
+            TempData["ToastrType"] = ToastrType.Error.ToString();
+            TempData["ToastMessage"] = ex.Message;
         }
         return View("Index", model);
     }
@@ -88,6 +101,9 @@ public class AccountController : Controller
     public IActionResult Logout()
     {
         HttpContext.Session.Clear();
+
+        TempData["ToastrType"] = ToastrType.Success.ToString();
+        TempData["ToastMessage"] = "Logout successfully.";
 
         return RedirectToAction("Index", "Account");
     }
