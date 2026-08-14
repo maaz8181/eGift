@@ -1,3 +1,4 @@
+using eGift.Admin.CustomFilter;
 using eGift.Admin.Helpers;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -35,6 +36,11 @@ builder.Services.AddSession(options =>
     options.IdleTimeout = TimeSpan.FromMinutes(30);
     options.Cookie.HttpOnly = true;
     options.Cookie.IsEssential = true;
+});
+
+builder.Services.AddControllersWithViews(options =>
+{
+    options.Filters.Add<SessionAuthorizeAttribute>();
 });
 
 var app = builder.Build();

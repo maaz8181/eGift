@@ -1,6 +1,7 @@
 using eGift.Admin.Helpers;
 using eGift.Admin.Models.ResponseViewModel;
 using eGift.Admin.Models.ViewModels;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace eGift.Admin.Controllers;
@@ -23,6 +24,7 @@ public class AccountController : Controller
     #region Default Account Actions
 
     // GET : Index
+    [AllowAnonymous]
     public IActionResult Index()
     {
         return View();
@@ -32,6 +34,7 @@ public class AccountController : Controller
 
     #region Login Actions
     // POST : Login
+    [AllowAnonymous]
     [HttpPost]
     public async Task<IActionResult> Login(SignInViewModel model)
     {
