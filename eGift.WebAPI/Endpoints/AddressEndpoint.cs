@@ -36,7 +36,8 @@ public static class AddressEndpoint
                     CountryName = country.CountryName,
                     StateName = state.StateName,
                     CityName = city.CityName,
-                    CreatedDate = address.CreatedDate
+                    CreatedDate = address.CreatedDate,
+                    FullAddress = address.Street1+", "+ city.CityName+", "+ state.StateName+", "+ country.CountryName+"-"+address.PinCode
                 }
                 ).AsNoTracking()
                 .ToListAsync();

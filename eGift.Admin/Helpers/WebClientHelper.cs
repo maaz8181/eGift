@@ -29,15 +29,13 @@ public class WebClientHelper
         return await response.Content.ReadFromJsonAsync<TResponse>();
     }
 
-    public async Task<TResponse?> PutAsync<TRequest, TResponse>(
+    public async Task<bool> PutAsync<TRequest, TResponse>(
         string url,
         TRequest request)
     {
         var response = await _httpClient.PutAsJsonAsync(url, request);
 
-        response.EnsureSuccessStatusCode();
-
-        return await response.Content.ReadFromJsonAsync<TResponse>();
+        return response.IsSuccessStatusCode;
     }
 
     public async Task DeleteAsync(string url)

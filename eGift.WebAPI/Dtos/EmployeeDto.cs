@@ -1,4 +1,5 @@
 using System.ComponentModel.DataAnnotations;
+using System.Text.Json.Serialization;
 
 namespace eGift.WebAPI.Dtos;
 
@@ -12,11 +13,15 @@ public record EmployeeDto(
     [Required] string? Email,
     int? AddressId,
     bool IsActive,
-    [Required] string? ProfileImagePath,
+    string? ProfileImagePath,
     string? ProfileImageData,
     [Required] int RoleId,
     bool IsDefault,
     bool IsDeleted,
     int CreatedBy,
     DateTime CreatedDate
-);
+)
+{
+    [JsonIgnore]
+    public IFormFile? ProfileImage { get; set; }
+};

@@ -1,6 +1,8 @@
+using eGift.WebAPI.Common;
 using eGift.WebAPI.Data;
 using eGift.WebAPI.Dtos;
 using eGift.WebAPI.Mappings;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 
 namespace eGift.WebAPI.Endpoints;
@@ -21,44 +23,30 @@ public static class EmployeeEndpoint
             try
             {
                 var employees = await (
-           from employee in context.Employees
-           join gender in context.Genders on employee.GenderId equals gender.Id
-           join role in context.Roles on employee.RoleId equals role.Id
-           join address in context.Addresses on employee.AddressId equals address.Id
-           join city in context.Cities on address.CityId equals city.Id
-           join state in context.States on address.StateId equals state.Id
-           join country in context.Countries on address.CountryId equals country.Id
-           where !employee.IsDeleted
-           select new
-           {
-               Id = employee.Id,
-               FirstName = employee.FirstName,
-               LastName = employee.LastName,
-               DateofBirth = employee.DateofBirth,
-               Age = CalculateAgeInYears(employee.DateofBirth),
-
-               GenderId = employee.GenderId,
-               GenderName = gender.GenderName,
-
-               Mobile = employee.Mobile,
-               Email = employee.Email,
-
-               AddressId = employee.AddressId,
-               FullAddress = address.Street1 + ", " + city.CityName + ", " + state.StateName + ", " + country.CountryName + " - " + address.PinCode,
-
-               IsActive = employee.IsActive,
-               ProfileImagePath = employee.ProfileImagePath,
-               ProfileImageData = employee.ProfileImageData,
-
-               RoleId = employee.RoleId,
-               RoleName = role.RoleName,
-
-               IsDefault = employee.IsDefault,
-               CreatedDate = employee.CreatedDate
-           }
-       )
-       .AsNoTracking()
-       .ToListAsync();
+                    from employee in context.Employees
+                    join gender in context.Genders on employee.GenderId equals gender.Id
+                    join role in context.Roles on employee.RoleId equals role.Id
+                    join address in context.Addresses on employee.AddressId equals address.Id
+                    join city in context.Cities on address.CityId equals city.Id
+                    join state in context.States on address.StateId equals state.Id
+                    join country in context.Countries on address.CountryId equals country.Id
+                    where !employee.IsDeleted
+                    select new
+                    {
+                        Id = employee.Id,
+                        FirstName = employee.FirstName,
+                        LastName = employee.LastName,
+                        DateofBirth = employee.DateofBirth,                        
+                        GenderName = gender.GenderName,
+                        Mobile = employee.Mobile,
+                        Email = employee.Email,                        
+                        IsActive = employee.IsActive,                        
+                        IsDefault = employee.IsDefault,
+                        CreatedDate = employee.CreatedDate
+                    }
+                )
+                .AsNoTracking()
+                .ToListAsync();
 
                 return employees is null
                     ? Results.NotFound()
@@ -90,43 +78,46 @@ public static class EmployeeEndpoint
             try
             {
                 var employee = await (
-             from e in context.Employees
-             join gender in context.Genders on e.GenderId equals gender.Id
-             join role in context.Roles on e.RoleId equals role.Id
-             join address in context.Addresses on e.AddressId equals address.Id
-             join city in context.Cities on address.CityId equals city.Id
-             join state in context.States on address.StateId equals state.Id
-             join country in context.Countries on address.CountryId equals country.Id
-             where e.Id == id && !e.IsDeleted
-             select new
-             {
-                 Id = e.Id,
-                 FirstName = e.FirstName,
-                 LastName = e.LastName,
-                 DateofBirth = e.DateofBirth,
-                 Age = CalculateAgeInYears(e.DateofBirth),
+                    from e in context.Employees
+                    join gender in context.Genders on e.GenderId equals gender.Id
+                    join role in context.Roles on e.RoleId equals role.Id
+                    join address in context.Addresses on e.AddressId equals address.Id
+                    join city in context.Cities on address.CityId equals city.Id
+                    join state in context.States on address.StateId equals state.Id
+                    join country in context.Countries on address.CountryId equals country.Id
+                    join login in context.Logins on e.Id equals login.RefId
+                    where e.Id == id && !e.IsDeleted && login.RefType == RefType.Employee.ToString()
+                    select new
+                    {
+                        Id = e.Id,
+                        FirstName = e.FirstName,
+                        LastName = e.LastName,
+                        DateofBirth = e.DateofBirth,
+                        Age = CalculateAgeInYears(e.DateofBirth),
 
-                 GenderId = e.GenderId,
-                 GenderName = gender.GenderName,
+                        GenderId = e.GenderId,
+                        GenderName = gender.GenderName,
 
-                 Mobile = e.Mobile,
-                 Email = e.Email,
+                        Mobile = e.Mobile,
+                        Email = e.Email,
 
-                 AddressId = e.AddressId,
-                 FullAddress = address.Street1 + ", " + city.CityName + ", " + state.StateName + ", " + country.CountryName + " - " + address.PinCode,
+                        AddressId = e.AddressId,
+                        FullAddress = address.Street1 + ", " + city.CityName + ", " + state.StateName + ", " + country.CountryName + " - " + address.PinCode,
 
-                 IsActive = e.IsActive,
-                 ProfileImagePath = e.ProfileImagePath,
-                 ProfileImageData = e.ProfileImageData,
+                        IsActive = e.IsActive,
+                        ProfileImagePath = e.ProfileImagePath,
+                        ProfileImageData = e.ProfileImageData,
 
-                 RoleId = e.RoleId,
-                 RoleName = role.RoleName,
+                        RoleId = e.RoleId,
+                        RoleName = role.RoleName,
 
-                 IsDefault = e.IsDefault
-             }
-         )
-         .AsNoTracking()
-         .FirstOrDefaultAsync();
+                        IsDefault = e.IsDefault,
+                        CreatedDate = e.CreatedDate,
+                        LastLogin = login.LastLoginDate
+                    }
+                )
+                .AsNoTracking()
+                .FirstOrDefaultAsync();
 
                 return employee is null
                     ? Results.NotFound()

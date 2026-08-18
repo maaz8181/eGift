@@ -37,7 +37,9 @@ public class DefaultEmployeeMiddleware
                 ProfileImagePath = null,
                 ProfileImageData = null,
                 RoleId = 1,
-                IsDefault = true
+                IsDefault = true,
+                CreatedBy = 1,
+                CreatedDate = DateTime.Now
             };
 
             context.Employees.Add(employee);
@@ -56,7 +58,9 @@ public class DefaultEmployeeMiddleware
                 RoleId = employee.RoleId,
                 IsActive = true,
                 LogInDate = null,
-                LastLoginDate = null
+                LastLoginDate = null,
+                CreatedBy = 1,
+                CreatedDate = DateTime.Now
             };
 
             context.Logins.Add(login);

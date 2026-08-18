@@ -45,6 +45,8 @@ public class AddressViewModel : BaseViewModel
     [Display(Name = "City Name")]
     public string? CityName { get; set; }
 
+    [Display(Name = "Full Address")]
+    public string? FullAddress { get; set; }
     #endregion
 
     #region Select List Properties

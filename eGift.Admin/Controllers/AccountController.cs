@@ -54,7 +54,7 @@ public class AccountController : Controller
                     "Unable to login.");
 
                 TempData["ToastrType"] = ToastrType.Error.ToString();
-                TempData["ToastMessage"] = "Unable to login.";
+                TempData["ToastrMessage"] = "Unable to login.";
 
                 return View("Index", model);
             }
@@ -66,7 +66,7 @@ public class AccountController : Controller
                     response.Message);
 
                 TempData["ToastrType"] = ToastrType.Error.ToString();
-                TempData["ToastMessage"] = response.Message;
+                TempData["ToastrMessage"] = response.Message;
 
                 return View("Index", model);
             }
@@ -79,7 +79,7 @@ public class AccountController : Controller
             HttpContext.Session.SetInt32("RoleId", response.RoleId);
 
             TempData["ToastrType"] = ToastrType.Success.ToString();
-            TempData["ToastMessage"] = response.Message;
+            TempData["ToastrMessage"] = response.Message;
 
             // Login successful
             return RedirectToAction("Index", "Home");
@@ -90,7 +90,7 @@ public class AccountController : Controller
             _logger.LogError("Exception in AccountController Login: {Message}", ex.Message);
 
             TempData["ToastrType"] = ToastrType.Error.ToString();
-            TempData["ToastMessage"] = ex.Message;
+            TempData["ToastrMessage"] = ex.Message;
         }
         return View("Index", model);
     }
@@ -103,7 +103,7 @@ public class AccountController : Controller
         HttpContext.Session.Clear();
 
         TempData["ToastrType"] = ToastrType.Success.ToString();
-        TempData["ToastMessage"] = "Logout successfully.";
+        TempData["ToastrMessage"] = "Logout successfully.";
 
         return RedirectToAction("Index", "Account");
     }

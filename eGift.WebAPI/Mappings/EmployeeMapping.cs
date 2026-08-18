@@ -25,7 +25,10 @@ public static class EmployeeMapping
             entity.IsDeleted,
             entity.CreatedBy,
             entity.CreatedDate
-        );
+        )
+        {
+            ProfileImage=entity.ProfileImage
+        };
     }
 
     // DTO -> Entity (create)
@@ -48,7 +51,8 @@ public static class EmployeeMapping
             IsDefault = dto.IsDefault,
             IsDeleted = dto.IsDeleted,
             CreatedBy = dto.CreatedBy,
-            CreatedDate = dto.CreatedDate
+            CreatedDate = dto.CreatedDate,
+            ProfileImage =dto.ProfileImage
         };
     }
     // DTO -> Entity (update existing entity)
@@ -69,6 +73,7 @@ public static class EmployeeMapping
         entity.IsDeleted = dto.IsDeleted;
         entity.UpdatedBy = dto.UpdatedBy;
         entity.UpdatedDate = dto.UpdatedDate;
+        entity.ProfileImage = dto.ProfileImage;
     }
 
 }

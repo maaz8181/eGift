@@ -1,3 +1,5 @@
+using System.ComponentModel.DataAnnotations.Schema;
+
 namespace eGift.WebAPI.Models
 {
     public class EmployeeModel : BaseModel
@@ -6,12 +8,11 @@ namespace eGift.WebAPI.Models
 
         public int Id { get; set; }
 
-        public required string FirstName { get; set; }
-
-        public required string LastName { get; set; }
+        public string FirstName { get; set; } = string.Empty;
+        public string LastName { get; set; } = string.Empty;
         public DateTime DateofBirth { get; set; }
         public int GenderId { get; set; }
-        public required string Mobile { get; set; }
+        public string Mobile { get; set; } = string.Empty;
         public string? Email { get; set; }
         public int? AddressId { get; set; }
         public bool IsActive { get; set; }
@@ -20,6 +21,11 @@ namespace eGift.WebAPI.Models
         public int RoleId { get; set; }
         public bool IsDefault { get; set; }
 
+        #endregion
+
+        #region Not Mapped Properties
+        [NotMapped]
+        public IFormFile? ProfileImage { get; set; }
         #endregion
     }
 }

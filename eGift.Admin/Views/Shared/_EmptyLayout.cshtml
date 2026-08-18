@@ -36,12 +36,12 @@
     <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
     <script src="~/js/site.js" asp-append-version="true"></script>
     <script src="~/lib/toastr/toastr.min.js"></script>
-    @if (TempData["ToastMessage"] != null)
+    @if (TempData["ToastrMessage"] != null)
     {
         <script>
             $(document).ready(function () {
 
-            var message = '@TempData["ToastMessage"]';
+            var message = '@TempData["ToastrMessage"]';
             var type = '@TempData["ToastrType"]';
 
             toastr[type.toLowerCase()](message);
