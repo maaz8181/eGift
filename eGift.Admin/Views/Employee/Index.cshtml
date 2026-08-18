@@ -5,139 +5,167 @@
     ViewData["Title"] = "Employees";
 }
 
-<div class="container-fluid">
+<link rel="stylesheet" href="~/css/employee.css" asp-append-version="true" />
 
-    <div class="d-flex justify-content-between align-items-center mb-3">
 
-        <h2>Employees</h2>
+<div class="container-fluid py-4">
 
-        <a asp-action="Create" class="btn btn-primary">
-            <i class="bi bi-plus-circle"></i>
-            Add Employee
-        </a>
+    <div class="d-flex justify-content-between align-items-center mb-4 egift-page-header">
+        <div>
+            <h2 class="mb-1">Employees</h2>
+            <p class="mb-0">@(Model?.EmployeeList?.Count() ?? 0) employee@(Model?.EmployeeList?.Count() == 1 ? "" : "s")
+                total</p>
+            </div>
+
+            <a asp-action="Create" class="btn btn-egift-primary d-flex align-items-center gap-2">
+                <i class="bi bi-plus-circle"></i>
+                Add Employee
+            </a>
+        </div>
+
+        @if (Model != null && Model.EmployeeList != null && Model.EmployeeList.Any())
+        {
+            <div class="card egift-card">
+                <div class="table-responsive">
+
+                    <table class="table egift-table mb-0">
+
+                        <thead>
+                            <tr>
+                                <th class="ps-4" style="width:50px;">#</th>
+                                <th>Employee</th>
+                                <th>Mobile</th>
+                                <th>Email</th>
+                                <th>Date of Birth</th>
+                                <th>Gender</th>
+                                <th>Status</th>
+                                <th>Created</th>
+                                <th class="text-center pe-4">Actions</th>
+                            </tr>
+                        </thead>
+
+                        <tbody>
+
+                            @{
+                                int count = 1;
+                            }
+
+                            @foreach (var employee in Model.EmployeeList)
+                            {
+                                <tr>
+
+                                    <td class="ps-4 egift-sub">
+                                        @count
+                                    </td>
+
+                                    <td>
+                                        <div class="egift-name">@employee.FirstName @employee.LastName</div>
+                                        @if (employee.IsDefault)
+                                        {
+                                            <div class="egift-sub">Default</div>
+                                        }
+                                    </td>
+
+                                    <td>
+                                        @employee.Mobile
+                                    </td>
+
+                                    <td>
+                                        @if (employee.Email != null)
+                                        {
+                                            <a href="mailto:@employee.Email" class="text-decoration-none"
+                                               style="color:var(--egift-blue-dark);">@employee.Email</a>
+                                        }
+                                        else
+                                        {
+                                            <span class="egift-sub">—</span>
+                                        }
+                                    </td>
+
+                                    <td>
+                                        @employee.DateofBirth.ToDateString()
+                                    </td>
+
+                                    <td>
+                                        @employee.GenderName
+                                    </td>
+
+                                    <td>
+                                        @if (employee.IsActive)
+                                        {
+                                            <span class="badge-egift-active">
+                                                <i class="bi bi-check-circle-fill me-1"></i>Active
+                                            </span>
+                                        }
+                                        else
+                                        {
+                                            <span class="badge-egift-inactive">
+                                                <i class="bi bi-x-circle-fill me-1"></i>Inactive
+                                            </span>
+                                        }
+                                    </td>
+
+                                    <td class="egift-sub">
+                                        @employee.CreatedDate.ToDateString()
+                                    </td>
+
+                                    <!-- Actions -->
+                                    <td class="text-center pe-4">
+
+                                        <div class="btn-group" role="group">
+
+                                            <a asp-action="Details" asp-route-id="@employee.Id" class="btn btn-sm btn-outline-info"
+                                               title="Details">
+                                                Details
+                                            </a>
+
+                                            <a asp-action="Edit" asp-route-id="@employee.Id" class="btn btn-sm btn-outline-primary"
+                                               title="Edit">
+                                                Edit
+                                            </a>
+                                            @if (!employee.IsDefault)
+                                            {
+                                                <form asp-action="Delete" asp-route-id="@employee.Id" method="post" class="d-inline"
+                                                      onsubmit="return confirm('Are you sure you want to delete this employee?');">
+
+                                                    @Html.AntiForgeryToken()
+
+                                                    <button type="submit" class="btn btn-sm btn-outline-danger" title="Delete">
+                                                        Delete
+                                                    </button>
+
+                                                </form>
+                                            }
+                                        </div>
+
+                                    </td>
+
+                                </tr>
+
+                                count++;
+                            }
+
+                        </tbody>
+
+                    </table>
+
+                </div>
+            </div>
+        }
+        else
+        {
+            <div class="card egift-card">
+                <div class="card-body text-center py-5">
+                    <div class="egift-empty-icon">
+                        <i class="bi bi-people"></i>
+                    </div>
+                    <h5 class="mb-1 fw-bold" style="color:var(--egift-text-dark);">No employees found</h5>
+                    <p class="egift-sub mb-3">Get started by adding your first employee.</p>
+                    <a asp-action="Create" class="btn btn-egift-primary">
+                        <i class="bi bi-plus-circle me-1"></i>Add Employee
+                    </a>
+                </div>
+            </div>
+        }
 
     </div>
-
-    @if (Model != null && Model.EmployeeList != null && Model.EmployeeList.Any())
-    {
-        <div class="table-responsive">
-
-            <table class="table table-bordered table-hover align-middle">
-
-                <thead class="table-dark">
-                    <tr>
-                        <th>#</th>
-                        <th>First Name</th>
-                        <th>Last Name</th>
-                        <th>Mobile</th>
-                        <th>Email</th>
-                        <th>Date of Birth</th>
-                        <th>Gender</th>
-                        <th>Active</th>
-                        <th>Created Date</th>
-                        <th>Actions</th>
-                    </tr>
-                </thead>
-
-                <tbody>
-
-                    @{
-                        int count = 1;
-                    }
-
-                    @foreach (var employee in Model.EmployeeList)
-                    {
-                        <tr>
-
-                            <td>
-                                @count
-                            </td>
-
-                            <td>
-                                @employee.FirstName
-                            </td>
-
-                            <td>
-                                @employee.LastName
-                            </td>
-
-                            <td>
-                                @employee.Mobile
-                            </td>
-
-                            <td>
-                                @(employee.Email ?? "-")
-                            </td>
-
-                            <td>
-                                @employee.DateofBirth.ToDateString()
-                            </td>
-
-                            <td>
-                                @employee.GenderName
-                            </td>
-
-                            <td>
-                                @if (employee.IsActive)
-                                {
-                                    <span class="badge bg-success">
-                                        Active
-                                    </span>
-                                }
-                                else
-                                {
-                                    <span class="badge bg-danger">
-                                        Inactive
-                                    </span>
-                                }
-                            </td>
-
-                            <td>
-                                @employee.CreatedDate.ToDateString()
-                            </td>
-
-                            <td>
-                                <div class="d-flex gap-1">
-
-                                    <a asp-action="Details" asp-route-id="@employee.Id" class="btn btn-info btn-sm">
-                                        Details
-                                    </a>
-
-                                    <a asp-action="Edit" asp-route-id="@employee.Id" class="btn btn-warning btn-sm">
-                                        Edit
-                                    </a>
-                                    @if (!employee.IsDefault)
-                                    {
-                                        <form asp-action="Delete" asp-route-id="@employee.Id" method="post" class="d-inline"
-                                              onsubmit="return confirm('Are you sure you want to delete this employee?');">
-
-                                            @Html.AntiForgeryToken()
-
-                                            <button type="submit" class="btn btn-danger btn-sm">
-                                                Delete
-                                            </button>
-
-                                        </form>
-                                    }
-                                </div>
-                            </td>
-
-                        </tr>
-
-                        count++;
-                    }
-
-                </tbody>
-
-            </table>
-
-        </div>
-    }
-    else
-    {
-        <div class="alert alert-info">
-            No employees found.
-        </div>
-    }
-
-</div>
