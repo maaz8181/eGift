@@ -22,5 +22,6 @@ public class EmployeeResponseViewModel
     public bool IsDefault { get; set; }
     public DateTime CreatedDate { get; set; }
     public DateTime? LastLogin { get; set; }
+    public int LoginId { get; set; }
     #endregion
 }

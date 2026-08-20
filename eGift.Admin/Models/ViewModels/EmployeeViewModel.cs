@@ -27,10 +27,12 @@ public class EmployeeViewModel : BaseViewModel
 
     [Display(Name = "Mobile")]
     [Required(ErrorMessage = "This field is required.")]
+    [RegularExpression(@"^[6-9]\d{9}$",ErrorMessage = "Please enter a valid 10-digit mobile number.")]
     public string Mobile { get; set; } = string.Empty;
 
     [Display(Name = "Email")]
     [Required(ErrorMessage = "This field is required.")]
+    [EmailAddress(ErrorMessage = "Please enter a valid email address.")]
     public string? Email { get; set; }
 
     [Display(Name = "Address")]
@@ -67,11 +69,24 @@ public class EmployeeViewModel : BaseViewModel
 
     [Display(Name = "Role Name")]
     public string? RoleName { get; set; }
-
-    #endregion
-
-    #region View Model Properties
     public IFormFile? ProfileImage { get; set; }
+
+    [Display(Name = "User Name")]
+    [Required(ErrorMessage = "This field is required.")]
+    public string UserName { get; set; } = string.Empty;
+
+    [Display(Name = "Password")]
+    [Required(ErrorMessage = "This field is required.")]
+    [RegularExpression(@"^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$",ErrorMessage = "Password must be at least 8 characters and contain at least one uppercase letter, one lowercase letter, one number, and one special character.")]
+    [DataType(DataType.Password)]
+    public string Password { get; set; } = string.Empty;
+
+    [Display(Name = "Confirm Password")]
+    [Required(ErrorMessage = "This field is required.")]
+    [Compare("Password", ErrorMessage = "Password and Confirm Password do not match.")]
+    [DataType(DataType.Password)]
+    public string? ConfirmPassword { get; set; }
+    public int LoginId { get; set; }
     #endregion
 
     #region Select List Properties

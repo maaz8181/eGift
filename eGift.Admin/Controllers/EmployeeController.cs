@@ -218,6 +218,40 @@ public class EmployeeController : Controller
                 return View(model);
             }
 
+            // Create login for the employee
+            var loginModel = new LoginViewModel
+            {
+                RefId = response.Id,
+                RefType = RefType.Employee.ToString(),
+                UserName = model.UserName,
+                Password = model.Password,
+                RoleId = model.RoleId,
+                IsActive = true,
+                LogInDate = null,
+                LastLoginDate = null,
+                CreatedBy = model.CreatedBy,
+                CreatedDate = DateTime.Now
+            };
+
+            var loginResponse = await _webClient
+                .PostAsync<LoginViewModel, LoginViewModel>(
+                    "/api/login",
+                    loginModel);
+
+            if (loginResponse == null)
+            {
+                ModelState.AddModelError(
+                    string.Empty,
+                    "Unable to create employee login.");
+
+                TempData["ToastrType"] = ToastrType.Error.ToString();
+                TempData["ToastrMessage"] = "Unable to create employee login.";
+
+                // Load dropdown data here
+                await LoadDropdowns(model);
+                return View(model);
+            }
+
             TempData["ToastrType"] = ToastrType.Success.ToString();
             TempData["ToastrMessage"] = "Employee created successfully.";
 
@@ -384,7 +418,28 @@ public class EmployeeController : Controller
             await _webClient.PutFormAsync<object>(
                 $"/api/employee/{id}",
                 formData);
-            
+
+            // Update login for the employee
+            var loginModel = new LoginViewModel
+            {
+                Id = model.LoginId,
+                RefId = model.Id,
+                RefType = RefType.Employee.ToString(),
+                UserName = model.UserName,
+                Password = model.Password,
+                RoleId = model.RoleId,
+                IsActive = true,
+                LogInDate = null,
+                LastLoginDate = null,
+                UpdatedBy = model.UpdatedBy,
+                UpdatedDate = DateTime.Now
+            };           
+
+            var loginResponse = await _webClient
+                .PutAsync<LoginViewModel, LoginViewModel>(
+                    $"/api/login/{loginModel.Id}",
+                    loginModel);
+
             TempData["ToastrType"] = ToastrType.Success.ToString();
             TempData["ToastrMessage"] = "Employee updated successfully.";
 

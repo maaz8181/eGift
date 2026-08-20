@@ -52,6 +52,39 @@
                         </span>
                     </div>
 
+                    <!-- User Name -->
+                    <div class="col-md-6 mb-3">
+                        <label asp-for="UserName" class="form-label">
+                        </label>
+
+                        <input asp-for="UserName" class="form-control" placeholder="Enter user name" />
+
+                        <span asp-validation-for="UserName" class="text-danger">
+                        </span>
+                    </div>
+
+                    <!-- Password -->
+                    <div class="col-md-6 mb-3">
+                        <label asp-for="Password" class="form-label">
+                        </label>
+
+                        <input asp-for="Password" class="form-control" placeholder="Enter password" />
+
+                        <span asp-validation-for="Password" class="text-danger">
+                        </span>
+                    </div>
+
+                    <!-- Confirm Password -->
+                    <div class="col-md-6 mb-3">
+                        <label asp-for="ConfirmPassword" class="form-label">
+                        </label>
+
+                        <input asp-for="ConfirmPassword" class="form-control" placeholder="Enter confirm password" />
+
+                        <span asp-validation-for="ConfirmPassword" class="text-danger">
+                        </span>
+                    </div>
+
                     <!-- Date of Birth -->
                     <div class="col-md-6 mb-3">
                         <label asp-for="DateofBirth" class="form-label">

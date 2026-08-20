@@ -113,7 +113,9 @@ public static class EmployeeEndpoint
 
                         IsDefault = e.IsDefault,
                         CreatedDate = e.CreatedDate,
-                        LastLogin = login.LastLoginDate
+                        UserName = login.UserName,
+                        LastLogin = login.LastLoginDate,
+                        LoginId = login.Id
                     }
                 )
                 .AsNoTracking()

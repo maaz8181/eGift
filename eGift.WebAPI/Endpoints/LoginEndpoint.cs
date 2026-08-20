@@ -121,6 +121,8 @@ public static class LoginEndpoint
             {
                 var login = dto.ToEntity();
 
+                login.Password = PasswordHelper.HashPassword(login.Password);
+
                 context.Logins.Add(login);
                 await context.SaveChangesAsync();
 
@@ -162,6 +164,8 @@ public static class LoginEndpoint
                 }
 
                 existingLogin.ToEntity(dto);
+
+                existingLogin.Password = PasswordHelper.HashPassword(existingLogin.Password);
 
                 context.Logins.Update(existingLogin);
                 await context.SaveChangesAsync();
