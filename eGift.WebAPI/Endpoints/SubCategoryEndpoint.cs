@@ -76,7 +76,9 @@ public static class SubCategoryEndpoint
                         CategoryId = sc.CategoryId,
                         CategoryName = category.CategoryName,
                         SubCategoryName = sc.SubCategoryName,
-                        Description = sc.Description
+                        Description = sc.Description,
+                        CreatedDate = sc.CreatedDate
+
                     }
                 )
                 .AsNoTracking()

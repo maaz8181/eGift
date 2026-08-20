@@ -60,6 +60,8 @@ public static class CategoryEndpoint
                         Id = c.Id,
                         CategoryName = c.CategoryName,
                         Description = c.Description,
+                        CreatedDate = c.CreatedDate,
+
                     }
                     ).AsNoTracking()
                     .FirstOrDefaultAsync();
