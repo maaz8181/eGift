@@ -1,4 +1,5 @@
 using System.ComponentModel.DataAnnotations;
+using System.Text.Json.Serialization;
 
 namespace eGift.WebAPI.Dtos;
 
@@ -19,5 +20,9 @@ public record CustomerDto(
    bool IsDeleted,
    int CreatedBy,
    DateTime CreatedDate
-);
 
+)
+{
+   [JsonIgnore]
+   public IFormFile? ProfileImage { get; set; }
+};

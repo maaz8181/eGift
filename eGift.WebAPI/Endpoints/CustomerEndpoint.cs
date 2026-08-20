@@ -36,23 +36,11 @@ public static class CustomerEndpoint
                         LastName = customer.LastName,
                         DateofBirth = customer.DateofBirth,
                         Age = CalculateAgeInYears(customer.DateofBirth),
-
-                        GenderId = customer.GenderId,
                         GenderName = gender.GenderName,
-
                         Mobile = customer.Mobile,
                         Email = customer.Email,
-
-                        AddressId = customer.AddressId,
-                        FullAddress = address.Street1 + ", " + city.CityName + ", " + state.StateName + ", " + country.CountryName + " - " + address.PinCode,
-
                         IsActive = customer.IsActive,
-                        ProfileImagePath = customer.ProfileImagePath,
-                        ProfileImageData = customer.ProfileImageData,
-
-                        RoleId = customer.RoleId,
                         RoleName = role.RoleName,
-
                         IsDefault = customer.IsDefault,
                         CreatedDate = customer.CreatedDate
                     }
@@ -96,6 +84,9 @@ public static class CustomerEndpoint
            join city in context.Cities on address.CityId equals city.Id
            join state in context.States on address.StateId equals state.Id
            join country in context.Countries on address.CountryId equals country.Id
+           join login in context.Logins on c.Id equals login.RefId into loginGroup
+
+           from login in loginGroup.DefaultIfEmpty()
            where c.Id == id && !c.IsDeleted
            select new
            {
@@ -121,7 +112,10 @@ public static class CustomerEndpoint
                RoleId = c.RoleId,
                RoleName = role.RoleName,
 
-               IsDefault = c.IsDefault
+               IsDefault = c.IsDefault,
+               CreatedDate = c.CreatedDate,
+               LastLogin = login != null
+                ? login.LastLoginDate : null
            }
        )
        .AsNoTracking()

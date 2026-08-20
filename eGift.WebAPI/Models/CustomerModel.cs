@@ -1,3 +1,5 @@
+using System.ComponentModel.DataAnnotations.Schema;
+
 namespace eGift.WebAPI.Models
 {
     public class CustomerModel : BaseModel
@@ -16,6 +18,11 @@ namespace eGift.WebAPI.Models
         public string? ProfileImageData { get; set; }
         public int RoleId { get; set; }
         public bool IsDefault { get; set; }
+        #endregion
+
+        #region Not Mapped Properties
+        [NotMapped]
+        public IFormFile? ProfileImage { get; set; }
         #endregion
     }
 }

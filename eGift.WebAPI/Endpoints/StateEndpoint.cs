@@ -77,7 +77,8 @@ public static class StateEndpoint
                         StateName = s.StateName,
                         CountryId = s.CountryId,
                         CountryName = country.CountryName,
-                        Description = s.Description
+                        Description = s.Description,
+                        CreatedDate = s.CreatedDate
                     }
                 )
                 .AsNoTracking()

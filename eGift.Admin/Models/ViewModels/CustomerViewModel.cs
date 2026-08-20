@@ -19,7 +19,7 @@ public class CustomerViewModel : BaseViewModel
 
     [Display(Name = "Date of Birth")]
     [Required(ErrorMessage = "This field is required.")]
-    public DateTime DateofBirth { get; set; }
+    public DateTime? DateofBirth { get; set; }
 
     [Display(Name = "Gender")]
     [Required(ErrorMessage = "This field is required.")]
@@ -40,7 +40,6 @@ public class CustomerViewModel : BaseViewModel
     public bool IsActive { get; set; }
 
     [Display(Name = "Profile Image Path")]
-    [Required(ErrorMessage = "This field is required.")]
     public string? ProfileImagePath { get; set; }
 
     [Display(Name = "Profile Image Data")]
@@ -71,6 +70,10 @@ public class CustomerViewModel : BaseViewModel
 
     #endregion
 
+    #region View Model Properties
+    public IFormFile? ProfileImage { get; set; }
+    #endregion
+    
     #region Select List Properties
 
     public SelectList? Genders { get; set; }

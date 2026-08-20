@@ -24,7 +24,10 @@ public static class CustomerMapping
             entity.IsDeleted,
             entity.CreatedBy,
             entity.CreatedDate
-        );
+        )
+        {
+            ProfileImage = entity.ProfileImage
+        }; ;
     }
 
     // DTO -> Entity (create)
@@ -47,7 +50,8 @@ public static class CustomerMapping
             IsDefault = dto.IsDefault,
             IsDeleted = dto.IsDeleted,
             CreatedBy = dto.CreatedBy,
-            CreatedDate = dto.CreatedDate
+            CreatedDate = dto.CreatedDate,
+            ProfileImage = dto.ProfileImage
         };
     }
     // DTO -> Entity (update existing entity)
@@ -68,6 +72,8 @@ public static class CustomerMapping
         entity.IsDeleted = dto.IsDeleted;
         entity.UpdatedBy = dto.UpdatedBy;
         entity.UpdatedDate = dto.UpdatedDate;
+        entity.ProfileImage = dto.ProfileImage;
+
     }
 
 }

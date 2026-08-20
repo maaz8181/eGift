@@ -1,13 +1,14 @@
-@model EmployeeViewModel
+@model CustomerViewModel
 
 @{
-    ViewData["Title"] = "Edit Employee";
+    ViewData["Title"] = "Create Customer";
 }
 
 <div class="container mt-4">
 
+    ```
     <div class="d-flex justify-content-between align-items-center mb-4">
-        <h2>Edit Employee</h2>
+        <h2>Create Customer</h2>
 
         <a asp-action="Index" class="btn btn-secondary">
             Back to List
@@ -17,18 +18,14 @@
     <div class="card">
 
         <div class="card-header">
-            <h5 class="mb-0">Employee Information</h5>
+            <h5 class="mb-0">Customer Information</h5>
         </div>
 
         <div class="card-body">
 
-            <form asp-action="Edit" method="post" enctype="multipart/form-data">
+            <form asp-action="Create" method="post" enctype="multipart/form-data">
 
                 @Html.AntiForgeryToken()
-
-                <input type="hidden" asp-for="Id" />
-                <input type="hidden" asp-for="IsDefault" />
-                <input type="hidden" asp-for="ProfileImagePath" />
 
                 <div asp-validation-summary="ModelOnly" class="text-danger mb-3">
                 </div>
@@ -37,6 +34,7 @@
 
                     <!-- First Name -->
                     <div class="col-md-6 mb-3">
+
                         <label asp-for="FirstName" class="form-label">
                         </label>
 
@@ -44,10 +42,12 @@
 
                         <span asp-validation-for="FirstName" class="text-danger">
                         </span>
+
                     </div>
 
                     <!-- Last Name -->
                     <div class="col-md-6 mb-3">
+
                         <label asp-for="LastName" class="form-label">
                         </label>
 
@@ -55,10 +55,12 @@
 
                         <span asp-validation-for="LastName" class="text-danger">
                         </span>
+
                     </div>
 
                     <!-- Date of Birth -->
                     <div class="col-md-6 mb-3">
+
                         <label asp-for="DateofBirth" class="form-label">
                             Date of Birth
                         </label>
@@ -67,10 +69,12 @@
 
                         <span asp-validation-for="DateofBirth" class="text-danger">
                         </span>
+
                     </div>
 
                     <!-- Gender -->
                     <div class="col-md-6 mb-3">
+
                         <label asp-for="GenderId" class="form-label">
                             Gender
                         </label>
@@ -85,10 +89,12 @@
 
                         <span asp-validation-for="GenderId" class="text-danger">
                         </span>
+
                     </div>
 
                     <!-- Mobile -->
                     <div class="col-md-6 mb-3">
+
                         <label asp-for="Mobile" class="form-label">
                         </label>
 
@@ -96,10 +102,12 @@
 
                         <span asp-validation-for="Mobile" class="text-danger">
                         </span>
+
                     </div>
 
                     <!-- Email -->
                     <div class="col-md-6 mb-3">
+
                         <label asp-for="Email" class="form-label">
                         </label>
 
@@ -107,10 +115,12 @@
 
                         <span asp-validation-for="Email" class="text-danger">
                         </span>
+
                     </div>
 
                     <!-- Address -->
                     <div class="col-md-6 mb-3">
+
                         <label asp-for="AddressId" class="form-label">
                             Address
                         </label>
@@ -125,10 +135,12 @@
 
                         <span asp-validation-for="AddressId" class="text-danger">
                         </span>
+
                     </div>
 
                     <!-- Role -->
                     <div class="col-md-6 mb-3">
+
                         <label asp-for="RoleId" class="form-label">
                             Role
                         </label>
@@ -143,9 +155,10 @@
 
                         <span asp-validation-for="RoleId" class="text-danger">
                         </span>
+
                     </div>
 
-                    <!-- Is Active -->
+                    <!-- Active -->
                     <div class="col-md-6 mb-3">
 
                         <div class="form-check mt-4">
@@ -160,47 +173,18 @@
 
                     </div>
 
-                    <!-- New Profile Image -->
-                    <div class="col-md-6 mb-3">
+                   
 
-                        <label asp-for="ProfileImage" class="form-label">
-                            Change Profile Image
-                        </label>
-
-                        <input asp-for="ProfileImage" type="file" class="form-control" accept="image/*" />
-
-                        <span asp-validation-for="ProfileImage" class="text-danger">
-                        </span>
-
-                        <small class="text-muted">
-                            Leave empty to keep the existing image.
-                        </small>
-
-                    </div>
-
-                    <!-- Current Profile Image -->
+                    <!-- Profile Image -->
                     <div class="col-md-6 mb-3">
 
                         <label class="form-label">
-                            Current Profile Image
+                            Profile Image
                         </label>
 
-                        @if (!string.IsNullOrEmpty(Model.ProfileImagePath))
-                        {
-                            <div>
-                                <img src="@Model.ProfileImagePath" alt="Profile Image" class="img-thumbnail"
-                                     style="width: 150px; height: 150px; object-fit: cover;" />
-                            </div>
-                        }
-                        else
-                        {
-                            <p class="text-muted">
-                                No profile image available.
-                            </p>
-                        }
+                        <input type="file" name="ProfileImage" class="form-control" accept="image/*" />
 
-                    </div>                    
-
+                    </div>
                 </div>
 
                 <hr />
@@ -212,7 +196,7 @@
                     </a>
 
                     <button type="submit" class="btn btn-primary">
-                        Update Employee
+                        Create Customer
                     </button>
 
                 </div>
@@ -221,6 +205,7 @@
 
         </div>
     </div>
+    ```
 
 </div>
 

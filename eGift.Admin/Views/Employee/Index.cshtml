@@ -26,7 +26,7 @@
         @if (Model != null && Model.EmployeeList != null && Model.EmployeeList.Any())
         {
             <div class="card egift-card">
-                <div class="table-responsive">
+                <div class="table-responsive egift-table-scroll">
 
                     <table class="table egift-table mb-0">
 
@@ -114,19 +114,32 @@
 
                                         <div class="btn-group" role="group">
 
-                                            <a asp-action="Details" asp-route-id="@employee.Id" class="btn btn-sm btn-outline-info"
-                                               title="Details">
-                                                Details
-                                            </a>
-
-                                            <a asp-action="Edit" asp-route-id="@employee.Id" class="btn btn-sm btn-outline-primary"
-                                               title="Edit">
-                                                Edit
-                                            </a>
-                                            @if (!employee.IsDefault)
+                                            
+                                            @if (employee.IsDefault)
                                             {
-                                                <form asp-action="Delete" asp-route-id="@employee.Id" method="post" class="d-inline"
-                                                      onsubmit="return confirm('Are you sure you want to delete this employee?');">
+                                                <a asp-action="Details" asp-route-id="@employee.Id" class="btn btn-sm btn-outline-info"
+                                                   title="Details">
+                                                    Details
+                                                </a>
+
+                                                <a asp-action="Edit" asp-route-id="@employee.Id" class="btn btn-sm btn-outline-primary"
+                                                   title="Edit">
+                                                    Edit
+                                                </a>                                                
+                                            }
+                                            else
+                                            {
+                                                <a asp-action="Details" asp-route-id="@employee.Id" class="btn btn-sm btn-outline-info"
+                                                   title="Details">
+                                                    Details
+                                                </a>
+
+                                                <a asp-action="Edit" asp-route-id="@employee.Id" class="btn btn-sm btn-outline-primary"
+                                                   title="Edit">
+                                                    Edit
+                                                </a>
+                                                <form asp-action="Delete" asp-route-id="@employee.Id" method="post"
+                                                      class="d-inline delete-form" data-delete-name="employee">
 
                                                     @Html.AntiForgeryToken()
 
@@ -169,3 +182,6 @@
         }
 
     </div>
+
+
+  

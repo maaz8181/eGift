@@ -37,7 +37,7 @@ public static class AddressEndpoint
                     StateName = state.StateName,
                     CityName = city.CityName,
                     CreatedDate = address.CreatedDate,
-                    FullAddress = address.Street1+", "+ city.CityName+", "+ state.StateName+", "+ country.CountryName+"-"+address.PinCode
+                    FullAddress = address.Street1 + ", " + city.CityName + ", " + state.StateName + ", " + country.CountryName + "-" + address.PinCode
                 }
                 ).AsNoTracking()
                 .ToListAsync();
@@ -80,7 +80,9 @@ public static class AddressEndpoint
                         PinCode = a.PinCode,
                         CountryName = co.CountryName,
                         StateName = s.StateName,
-                        CityName = c.CityName
+                        CityName = c.CityName,
+                        CreatedDate = a.CreatedDate,
+                        FullAddress = a.Street1 + ", " + c.CityName + ", " + s.StateName + ", " + co.CountryName + "-" + a.PinCode
                     }
                 ).AsNoTracking()
                 .FirstOrDefaultAsync();

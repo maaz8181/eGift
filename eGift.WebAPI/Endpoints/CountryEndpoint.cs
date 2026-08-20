@@ -65,7 +65,8 @@ public static class CountryEndpoint
                         Id = c.Id,
                         CountryCode = c.CountryCode,
                         CountryName = c.CountryName,
-                        Description = c.Description
+                        Description = c.Description,
+                        CreatedDate = c.CreatedDate
                     }
                 ).AsNoTracking()
                 .FirstOrDefaultAsync();

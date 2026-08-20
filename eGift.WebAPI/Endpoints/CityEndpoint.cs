@@ -81,7 +81,8 @@ public static class CityEndpoint
                   CountryId = s.CountryId,
                   CountryName = co.CountryName,
 
-                  Description = c.Description
+                  Description = c.Description,
+                  CreatedDate = c.CreatedDate
               }
           )
           .AsNoTracking()
