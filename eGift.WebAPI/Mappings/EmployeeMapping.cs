@@ -66,8 +66,6 @@ public static class EmployeeMapping
         entity.Email = dto.Email;
         entity.AddressId = dto.AddressId;
         entity.IsActive = dto.IsActive;
-        entity.ProfileImagePath = dto.ProfileImagePath;
-        entity.ProfileImageData = dto.ProfileImageData;
         entity.RoleId = dto.RoleId;
         entity.IsDefault = dto.IsDefault;
         entity.IsDeleted = dto.IsDeleted;

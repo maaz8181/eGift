@@ -244,8 +244,8 @@ public static class EmployeeEndpoint
                 {
                     var uploadFolder = Path.Combine(
                         environment.ContentRootPath,
-                        "Uploads",
-                        "Employees");
+                        "uploads",
+                        "employees");
 
                     Directory.CreateDirectory(uploadFolder);
 
@@ -265,7 +265,7 @@ public static class EmployeeEndpoint
                     await dto.ProfileImage.CopyToAsync(stream);
 
                     existingEmployee.ProfileImagePath =
-                        $"/Uploads/Employees/{fileName}";
+                        $"/uploads/employees/{fileName}";
                 }
 
                 context.Employees.Update(existingEmployee);

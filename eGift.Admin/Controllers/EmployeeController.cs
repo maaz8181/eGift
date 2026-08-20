@@ -351,6 +351,10 @@ public class EmployeeController : Controller
                 nameof(model.IsDeleted));
 
             formData.Add(
+                new StringContent(model.ProfileImagePath ?? string.Empty),
+                nameof(model.ProfileImagePath));
+
+            formData.Add(
                 new StringContent(model.UpdatedBy.Value.ToString()),
                 nameof(model.UpdatedBy));
 
@@ -426,7 +430,7 @@ public class EmployeeController : Controller
     }
     #endregion
 
-    #region 
+    #region Image Retrieval
     [HttpGet]
     public async Task<IActionResult> Image(string fileName)
     {
