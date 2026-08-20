@@ -114,15 +114,95 @@ public class EmployeeController : Controller
         {
             if (!ModelState.IsValid)
             {
-                // await LoadDropdowns();
+                // Load dropdown data here
+                await LoadDropdowns(model);
                 return View(model);
             }
 
             model.CreatedBy= Convert.ToInt32(HttpContext.Session.GetInt32("UserId"));
             model.CreatedDate= DateTime.Now;
 
-            var response = await _webClient.PostAsync<EmployeeViewModel, EmployeeViewModel>(
-                    "/api/employee", model);
+            using var formData = new MultipartFormDataContent();
+            formData.Add(
+                        new StringContent(model.Id.ToString()),
+                        nameof(model.Id));
+
+            formData.Add(
+                new StringContent(model.FirstName),
+                nameof(model.FirstName));
+
+            formData.Add(
+                new StringContent(model.LastName),
+                nameof(model.LastName));
+
+            formData.Add(
+                new StringContent(model.DateofBirth.ToDateTimeString()),
+                nameof(model.DateofBirth));
+
+            formData.Add(
+                new StringContent(model.GenderId.ToString()),
+                nameof(model.GenderId));
+
+            formData.Add(
+                new StringContent(model.Mobile),
+                nameof(model.Mobile));
+
+            if (!string.IsNullOrWhiteSpace(model.Email))
+            {
+                formData.Add(
+                    new StringContent(model.Email),
+                    nameof(model.Email));
+            }
+
+            if (model.AddressId.HasValue)
+            {
+                formData.Add(
+                    new StringContent(model.AddressId.Value.ToString()),
+                    nameof(model.AddressId));
+            }
+
+            formData.Add(
+                new StringContent(model.IsActive.ToString()),
+                nameof(model.IsActive));
+
+            formData.Add(
+                new StringContent(model.RoleId.ToString()),
+                nameof(model.RoleId));
+
+            formData.Add(
+                new StringContent(model.IsDefault.ToString()),
+                nameof(model.IsDefault));
+
+            formData.Add(
+                new StringContent(model.IsDeleted.ToString()),
+                nameof(model.IsDeleted));
+
+            formData.Add(
+                new StringContent(model.CreatedBy.ToString()),
+                nameof(model.CreatedBy));
+
+            formData.Add(
+                new StringContent(model.CreatedDate.ToDateTimeString()),
+                nameof(model.CreatedDate));
+
+            // Image
+            if (model.ProfileImage != null)
+            {
+                var imageContent =
+                    new StreamContent(model.ProfileImage.OpenReadStream());
+
+                imageContent.Headers.ContentType =
+                    new System.Net.Http.Headers.MediaTypeHeaderValue(
+                        model.ProfileImage.ContentType);
+
+                formData.Add(
+                    imageContent,
+                    nameof(model.ProfileImage),
+                    model.ProfileImage.FileName);
+            }
+
+            var response = await _webClient.PostFormAsync<EmployeeResponseViewModel>(
+                    "/api/employee", formData);
 
             if (response == null)
             {
@@ -133,7 +213,8 @@ public class EmployeeController : Controller
                 TempData["ToastrType"] = ToastrType.Error.ToString();
                 TempData["ToastrMessage"] = "Unable to create employee.";
 
-                // await LoadDropdowns();
+                // Load dropdown data here
+                await LoadDropdowns(model);
                 return View(model);
             }
 
@@ -149,7 +230,8 @@ public class EmployeeController : Controller
             TempData["ToastrType"] = ToastrType.Error.ToString();
             TempData["ToastrMessage"] = ex.Message;
 
-            // await LoadDropdowns();
+            // Load dropdown data here
+            await LoadDropdowns(model);
             return View(model);
         }
     }
@@ -211,24 +293,94 @@ public class EmployeeController : Controller
             model.UpdatedBy = Convert.ToInt32(HttpContext.Session.GetInt32("UserId"));
             model.UpdatedDate = DateTime.Now;
 
-            var success = await _webClient.PutAsync<EmployeeViewModel, EmployeeViewModel>(
-                    $"/api/employee/{id}", model);
+            using var formData = new MultipartFormDataContent();
 
-            if (!success)
+            formData.Add(
+                new StringContent(model.Id.ToString()),
+                nameof(model.Id));
+
+            formData.Add(
+                new StringContent(model.FirstName),
+                nameof(model.FirstName));
+
+            formData.Add(
+                new StringContent(model.LastName),
+                nameof(model.LastName));
+
+            formData.Add(
+                new StringContent(
+                    model.DateofBirth.ToDateTimeString()),
+                nameof(model.DateofBirth));
+
+            formData.Add(
+                new StringContent(model.GenderId.ToString()),
+                nameof(model.GenderId));
+
+            formData.Add(
+                new StringContent(model.Mobile),
+                nameof(model.Mobile));
+
+            if (!string.IsNullOrWhiteSpace(model.Email))
             {
-                ModelState.AddModelError(
-                    string.Empty,
-                    "Unable to update employee.");
-
-                TempData["ToastrType"] = ToastrType.Error.ToString();
-                TempData["ToastrMessage"] = "Unable to update employee.";
-
-                // Load dropdown data here
-                await LoadDropdowns(model);
-
-                return View(model);
+                formData.Add(
+                    new StringContent(model.Email),
+                    nameof(model.Email));
             }
 
+            if (model.AddressId.HasValue)
+            {
+                formData.Add(
+                    new StringContent(model.AddressId.Value.ToString()),
+                    nameof(model.AddressId));
+            }
+
+            formData.Add(
+                new StringContent(model.IsActive.ToString()),
+                nameof(model.IsActive));
+
+            formData.Add(
+                new StringContent(model.RoleId.ToString()),
+                nameof(model.RoleId));
+
+            formData.Add(
+                new StringContent(model.IsDefault.ToString()),
+                nameof(model.IsDefault));
+
+            formData.Add(
+                new StringContent(model.IsDeleted.ToString()),
+                nameof(model.IsDeleted));
+
+            formData.Add(
+                new StringContent(model.UpdatedBy.Value.ToString()),
+                nameof(model.UpdatedBy));
+
+            formData.Add(
+                new StringContent(model.UpdatedDate.ToDateTimeString()),
+                nameof(model.UpdatedDate));
+
+            // Profile Image
+            if (model.ProfileImage != null &&
+                model.ProfileImage.Length > 0)
+            {
+                var imageContent =
+                    new StreamContent(
+                        model.ProfileImage.OpenReadStream());
+
+                imageContent.Headers.ContentType =
+                    new System.Net.Http.Headers.MediaTypeHeaderValue(
+                        model.ProfileImage.ContentType);
+
+                formData.Add(
+                    imageContent,
+                    nameof(model.ProfileImage),
+                    model.ProfileImage.FileName);
+            }
+
+            var response =
+            await _webClient.PutFormAsync<object>(
+                $"/api/employee/{id}",
+                formData);
+            
             TempData["ToastrType"] = ToastrType.Success.ToString();
             TempData["ToastrMessage"] = "Employee updated successfully.";
 
@@ -271,6 +423,50 @@ public class EmployeeController : Controller
         }
 
         return RedirectToAction(nameof(Index));
+    }
+    #endregion
+
+    #region 
+    [HttpGet]
+    public async Task<IActionResult> Image(string fileName)
+    {
+        try
+        {
+            if (string.IsNullOrWhiteSpace(fileName))
+            {
+                return NotFound();
+            }
+
+            var image = await _webClient.GetFileAsync(
+                $"/api/employee/image/{Uri.EscapeDataString(fileName)}");
+
+            if (image == null || image.Length == 0)
+            {
+                return NotFound();
+            }
+
+            var extension = Path.GetExtension(fileName)
+                .ToLowerInvariant();
+
+            var contentType = extension switch
+            {
+                ".jpg" or ".jpeg" => "image/jpeg",
+                ".png" => "image/png",
+                ".gif" => "image/gif",
+                ".webp" => "image/webp",
+                _ => "application/octet-stream"
+            };
+
+            return File(image, contentType);
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(
+                ex,
+                "Exception in EmployeeController Image.");
+
+            return NotFound();
+        }
     }
     #endregion
 

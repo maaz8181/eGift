@@ -23,6 +23,7 @@ if (app.Environment.IsDevelopment())
     // app.MapOpenApi();
 }
 
+app.UseStaticFiles();
 app.UseHttpsRedirection();
 
 // Use API key middleware

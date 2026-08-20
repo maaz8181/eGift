@@ -73,7 +73,9 @@ public static class GenderEndpoint
                     {
                         Id = g.Id,
                         GenderName = g.GenderName,
-                        Description = g.Description
+                        Description = g.Description,
+                        CreatedDate = g.CreatedDate
+
                     }
                 )
                 .AsNoTracking()

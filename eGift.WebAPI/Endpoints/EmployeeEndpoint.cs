@@ -36,11 +36,11 @@ public static class EmployeeEndpoint
                         Id = employee.Id,
                         FirstName = employee.FirstName,
                         LastName = employee.LastName,
-                        DateofBirth = employee.DateofBirth,                        
+                        DateofBirth = employee.DateofBirth,
                         GenderName = gender.GenderName,
                         Mobile = employee.Mobile,
-                        Email = employee.Email,                        
-                        IsActive = employee.IsActive,                        
+                        Email = employee.Email,
+                        IsActive = employee.IsActive,
                         IsDefault = employee.IsDefault,
                         CreatedDate = employee.CreatedDate
                     }
@@ -144,15 +144,52 @@ public static class EmployeeEndpoint
 
         // POST: api/employee
         group.MapPost("/", async (
-            EmployeeDto dto,
+            [FromForm] EmployeeDto dto,
             AppDBContext context,
-            ILoggerFactory loggerFactory) =>
+            ILoggerFactory loggerFactory,
+            IWebHostEnvironment environment) =>
         {
             var logger = loggerFactory.CreateLogger("EmployeeEndpoint");
 
             try
             {
                 var employee = dto.ToEntity();
+
+                // Create upload folder
+                var uploadFolder = Path.Combine(
+                    environment.ContentRootPath,
+                    "uploads",
+                    "employees");
+
+                if (!Directory.Exists(uploadFolder))
+                {
+                    Directory.CreateDirectory(uploadFolder);
+                }
+
+                // Save image
+                if (dto.ProfileImage != null &&
+                    dto.ProfileImage.Length > 0)
+                {
+                    var extension = Path.GetExtension(
+                        dto.ProfileImage.FileName);
+
+                    var fileName = $"{Guid.NewGuid()}{extension}";
+
+                    var filePath = Path.Combine(
+                        uploadFolder,
+                        fileName);
+
+                    await using var stream =
+                        new FileStream(
+                            filePath,
+                            FileMode.Create);
+
+                    await dto.ProfileImage.CopyToAsync(stream);
+
+                    // Store relative path in database
+                    employee.ProfileImagePath =
+                        $"/uploads/employees/{fileName}";
+                }
 
                 context.Employees.Add(employee);
                 await context.SaveChangesAsync();
@@ -178,14 +215,15 @@ public static class EmployeeEndpoint
                     statusCode: StatusCodes.Status500InternalServerError
                 );
             }
-        });
+        }).DisableAntiforgery();
 
         // PUT: api/employee/{id}
         group.MapPut("/{id:int}", async (
             int id,
-            EditEmployeeDto dto,
+            [FromForm] EditEmployeeDto dto,
             AppDBContext context,
-            ILoggerFactory loggerFactory) =>
+            ILoggerFactory loggerFactory,
+            IWebHostEnvironment environment) =>
         {
             var logger = loggerFactory.CreateLogger("EmployeeEndpoint");
 
@@ -199,6 +237,36 @@ public static class EmployeeEndpoint
                 }
 
                 existingEmployee.ToEntity(dto);
+
+                // Upload new image
+                if (dto.ProfileImage != null &&
+                    dto.ProfileImage.Length > 0)
+                {
+                    var uploadFolder = Path.Combine(
+                        environment.ContentRootPath,
+                        "Uploads",
+                        "Employees");
+
+                    Directory.CreateDirectory(uploadFolder);
+
+                    var extension = Path.GetExtension(
+                        dto.ProfileImage.FileName);
+
+                    var fileName = $"{Guid.NewGuid()}{extension}";
+
+                    var filePath = Path.Combine(
+                        uploadFolder,
+                        fileName);
+
+                    await using var stream = new FileStream(
+                        filePath,
+                        FileMode.Create);
+
+                    await dto.ProfileImage.CopyToAsync(stream);
+
+                    existingEmployee.ProfileImagePath =
+                        $"/Uploads/Employees/{fileName}";
+                }
 
                 context.Employees.Update(existingEmployee);
                 await context.SaveChangesAsync();
@@ -222,7 +290,7 @@ public static class EmployeeEndpoint
                     statusCode: StatusCodes.Status500InternalServerError
                 );
             }
-        });
+        }).DisableAntiforgery();
 
         // DELETE: api/employee/{id}?loginUserId={loginUserId}&deletedDate={deletedDate}
         group.MapDelete("/{id:int}", async (
@@ -271,6 +339,46 @@ public static class EmployeeEndpoint
             }
         });
 
+        #endregion
+
+        #region Image Endpoints
+        group.MapGet("/image/{fileName}", (
+            string fileName,
+            IWebHostEnvironment environment) =>
+        {
+            if (fileName != Path.GetFileName(fileName))
+            {
+                return Results.BadRequest();
+            }
+
+            var uploadFolder = Path.Combine(
+                environment.ContentRootPath,
+                "Uploads",
+                "Employees");
+
+            var filePath = Path.Combine(
+                uploadFolder,
+                fileName);
+
+            if (!File.Exists(filePath))
+            {
+                return Results.NotFound();
+            }
+
+            var extension = Path.GetExtension(fileName)
+                .ToLowerInvariant();
+
+            var contentType = extension switch
+            {
+                ".jpg" or ".jpeg" => "image/jpeg",
+                ".png" => "image/png",
+                ".gif" => "image/gif",
+                ".webp" => "image/webp",
+                _ => "application/octet-stream"
+            };
+
+            return Results.File(filePath, contentType);
+        });
         #endregion
 
         return group;

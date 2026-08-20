@@ -8,27 +8,27 @@ public static class EmployeeMapping
     // Entity -> DTO
     public static EmployeeDto ToDto(this EmployeeModel entity)
     {
-        return new EmployeeDto(
-           entity.Id,
-            entity.FirstName,
-            entity.LastName,
-            entity.DateofBirth,
-            entity.GenderId,
-            entity.Mobile,
-            entity.Email,
-            entity.AddressId,
-            entity.IsActive,
-            entity.ProfileImagePath,
-            entity.ProfileImageData,
-            entity.RoleId,
-            entity.IsDefault,
-            entity.IsDeleted,
-            entity.CreatedBy,
-            entity.CreatedDate
-        )
+        return new EmployeeDto
         {
-            ProfileImage=entity.ProfileImage
+            Id = entity.Id,
+            FirstName = entity.FirstName,
+            LastName = entity.LastName,
+            DateofBirth = entity.DateofBirth,
+            GenderId = entity.GenderId,
+            Mobile = entity.Mobile,
+            Email = entity.Email,
+            AddressId = entity.AddressId,
+            IsActive = entity.IsActive,
+            ProfileImagePath = entity.ProfileImagePath,
+            ProfileImageData = entity.ProfileImageData,
+            RoleId = entity.RoleId,
+            IsDefault = entity.IsDefault,
+            IsDeleted = entity.IsDeleted,
+            CreatedBy = entity.CreatedBy,
+            CreatedDate = entity.CreatedDate,
+            ProfileImage = entity.ProfileImage
         };
+           
     }
 
     // DTO -> Entity (create)

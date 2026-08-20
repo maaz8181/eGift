@@ -2,6 +2,7 @@
 
 @{
     ViewData["Title"] = "Edit Employee";
+    var webApiUrl = Configuration["WebAPIUrl"];
 }
 
 <div class="container mt-4">
@@ -187,10 +188,15 @@
 
                         @if (!string.IsNullOrEmpty(Model.ProfileImagePath))
                         {
-                            <div>
-                                <img src="@Model.ProfileImagePath" alt="Profile Image" class="img-thumbnail"
-                                     style="width: 150px; height: 150px; object-fit: cover;" />
-                            </div>
+                            <img src="@Url.Action(
+                                                                                                                               "Image",
+                                                                                                                               "Employee",
+                                                                                                                               new
+                                                                                                                               {
+                                                                                                                                   fileName = System.IO.Path.GetFileName(Model.ProfileImagePath)
+                                                                                                                               })"
+                                 alt="Employee Profile" class="img-thumbnail"
+                                 style="width:150px; height:150px; object-fit:cover;" />
                         }
                         else
                         {
@@ -199,7 +205,7 @@
                             </p>
                         }
 
-                    </div>                    
+                    </div>
 
                 </div>
 
