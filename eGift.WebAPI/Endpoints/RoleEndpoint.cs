@@ -75,7 +75,9 @@ public static class RoleEndpoint
                     {
                         Id = r.Id,
                         RoleName = r.RoleName,
-                        Description = r.Description
+                        Description = r.Description,
+                        CreatedDate = r.CreatedDate
+
                     }
                 )
                 .AsNoTracking()
