@@ -137,10 +137,92 @@ public class CustomerController : Controller
 
             model.CreatedDate = DateTime.Now;
 
+            using var formData = new MultipartFormDataContent();
+
+            formData.Add(
+            new StringContent(model.Id.ToString()),
+            nameof(model.Id));
+
+            formData.Add(
+                new StringContent(model.FirstName),
+                nameof(model.FirstName));
+
+            formData.Add(
+                new StringContent(model.LastName),
+                nameof(model.LastName));
+
+            formData.Add(
+                new StringContent(model.DateofBirth.ToDateTimeString()),
+                nameof(model.DateofBirth));
+
+            formData.Add(
+                new StringContent(model.GenderId.ToString()),
+                nameof(model.GenderId));
+
+            formData.Add(
+                new StringContent(model.Mobile),
+                nameof(model.Mobile));
+
+            if (!string.IsNullOrWhiteSpace(model.Email))
+            {
+                formData.Add(
+                    new StringContent(model.Email),
+                    nameof(model.Email));
+            }
+
+            if (model.AddressId.HasValue)
+            {
+                formData.Add(
+                    new StringContent(model.AddressId.Value.ToString()),
+                    nameof(model.AddressId));
+            }
+
+            formData.Add(
+                new StringContent(model.IsActive.ToString()),
+                nameof(model.IsActive));
+
+            formData.Add(
+                new StringContent(model.RoleId.ToString()),
+                nameof(model.RoleId));
+
+            formData.Add(
+                new StringContent(model.IsDefault.ToString()),
+                nameof(model.IsDefault));
+
+            formData.Add(
+                new StringContent(model.IsDeleted.ToString()),
+                nameof(model.IsDeleted));
+
+            formData.Add(
+                new StringContent(model.CreatedBy.ToString()),
+                nameof(model.CreatedBy));
+
+            formData.Add(
+                new StringContent(model.CreatedDate.ToDateTimeString()),
+                nameof(model.CreatedDate));
+
+            // Profile Image
+            if (model.ProfileImage != null &&
+                model.ProfileImage.Length > 0)
+            {
+                var imageContent =
+                    new StreamContent(
+                        model.ProfileImage.OpenReadStream());
+
+                imageContent.Headers.ContentType =
+                    new System.Net.Http.Headers.MediaTypeHeaderValue(
+                        model.ProfileImage.ContentType);
+
+                formData.Add(
+                    imageContent,
+                    nameof(model.ProfileImage),
+                    model.ProfileImage.FileName);
+            }
+
             var response = await _webClient
-                .PostAsync<CustomerViewModel, CustomerViewModel>(
+                .PostFormAsync<CustomerResponseViewModel>(
                     "/api/customer",
-                    model);
+                    formData);
 
             if (response == null)
             {
@@ -154,10 +236,48 @@ public class CustomerController : Controller
                 TempData["ToastrMessage"] =
                     "Unable to create customer.";
 
+                // Load dropdown data here
+                await LoadDropdowns(model);
+                return View(model);
+            }
+
+            // Create login for the customer
+            var loginModel = new LoginViewModel
+            {
+                RefId = response.Id,
+                RefType = RefType.Customer.ToString(),
+                UserName = model.UserName,
+                Password = model.Password,
+                RoleId = model.RoleId,
+                IsActive = true,
+                LogInDate = null,
+                LastLoginDate = null,
+                CreatedBy = model.CreatedBy,
+                CreatedDate = DateTime.Now
+            };
+
+            var loginResponse = await _webClient
+            .PostAsync<LoginViewModel, LoginViewModel>(
+                "/api/login",
+                loginModel);
+
+            if (loginResponse == null)
+            {
+                ModelState.AddModelError(
+                    string.Empty,
+                    "Unable to create customer login.");
+
+                TempData["ToastrType"] =
+                    ToastrType.Error.ToString();
+
+                TempData["ToastrMessage"] =
+                    "Unable to create customer login.";
+
                 await LoadDropdowns(model);
 
                 return View(model);
             }
+
 
             TempData["ToastrType"] =
                 ToastrType.Success.ToString();
@@ -241,14 +361,6 @@ public class CustomerController : Controller
 
             if (!ModelState.IsValid)
             {
-                foreach (var item in ModelState)
-                {
-                    foreach (var error in item.Value.Errors)
-                    {
-                        Console.WriteLine(
-                            $"{item.Key} : {error.ErrorMessage}");
-                    }
-                }
                 await LoadDropdowns(model);
 
                 return View(model);
@@ -259,26 +371,126 @@ public class CustomerController : Controller
 
             model.UpdatedDate = DateTime.Now;
 
-            var success = await _webClient
-                .PutAsync<CustomerViewModel, CustomerViewModel>(
-                    $"/api/customer/{id}",
-                    model);
+            using var formData = new MultipartFormDataContent();
 
-            if (!success)
+            formData.Add(
+            new StringContent(model.Id.ToString()),
+            nameof(model.Id));
+
+            formData.Add(
+                new StringContent(model.FirstName),
+                nameof(model.FirstName));
+
+            formData.Add(
+                new StringContent(model.LastName),
+                nameof(model.LastName));
+
+            formData.Add(
+                new StringContent(
+                    model.DateofBirth.ToDateTimeString()),
+                nameof(model.DateofBirth));
+
+            formData.Add(
+                new StringContent(model.GenderId.ToString()),
+                nameof(model.GenderId));
+
+            formData.Add(
+                new StringContent(model.Mobile),
+                nameof(model.Mobile));
+
+            if (!string.IsNullOrWhiteSpace(model.Email))
             {
-                ModelState.AddModelError(
-                    string.Empty,
-                    "Unable to update customer.");
+                formData.Add(
+                    new StringContent(model.Email),
+                    nameof(model.Email));
+            }
 
-                TempData["ToastrType"] =
-                    ToastrType.Error.ToString();
+            if (model.AddressId.HasValue)
+            {
+                formData.Add(
+                    new StringContent(
+                        model.AddressId.Value.ToString()),
+                    nameof(model.AddressId));
+            }
 
-                TempData["ToastrMessage"] =
-                    "Unable to update customer.";
+            formData.Add(
+                new StringContent(model.IsActive.ToString()),
+                nameof(model.IsActive));
 
-                await LoadDropdowns(model);
+            formData.Add(
+                new StringContent(model.RoleId.ToString()),
+                nameof(model.RoleId));
 
-                return View(model);
+            formData.Add(
+                new StringContent(model.IsDefault.ToString()),
+                nameof(model.IsDefault));
+
+            formData.Add(
+                new StringContent(model.IsDeleted.ToString()),
+                nameof(model.IsDeleted));
+
+            // for keeping existing image
+            formData.Add(
+                new StringContent(
+                    model.ProfileImagePath ?? string.Empty),
+                nameof(model.ProfileImagePath));
+                
+            formData.Add(
+                new StringContent(
+                    model.UpdatedBy.Value.ToString()),
+                nameof(model.UpdatedBy));
+
+            formData.Add(
+                new StringContent(
+                    model.UpdatedDate.ToDateTimeString()),
+                nameof(model.UpdatedDate));
+
+            // New Profile Image
+            if (model.ProfileImage != null &&
+                model.ProfileImage.Length > 0)
+            {
+                var imageContent =
+                    new StreamContent(
+                        model.ProfileImage.OpenReadStream());
+
+                imageContent.Headers.ContentType =
+                    new System.Net.Http.Headers.MediaTypeHeaderValue(
+                        model.ProfileImage.ContentType);
+
+                formData.Add(
+                    imageContent,
+                    nameof(model.ProfileImage),
+                    model.ProfileImage.FileName);
+            }
+
+            await _webClient.PutFormAsync<object>(
+                    $"/api/customer/{id}",
+                    formData);
+
+            // Update login for the customer
+            var loginModel = new LoginViewModel
+            {
+                Id = model.LoginId,
+                RefId = model.Id,
+                RefType = RefType.Customer.ToString(),
+                UserName = model.UserName,
+                Password = model.Password,
+                RoleId = model.RoleId,
+                IsActive = true,
+                LogInDate = null,
+                LastLoginDate = null,
+                UpdatedBy = model.UpdatedBy,
+                UpdatedDate = DateTime.Now
+            };
+
+            var loginResponse = await _webClient
+                .PutAsync<LoginViewModel, LoginViewModel>(
+                    $"/api/login/{loginModel.Id}",
+                    loginModel);
+
+            if (!loginResponse)
+            {
+                throw new Exception("Unable to update customer login.");
             }
 
             TempData["ToastrType"] =
@@ -347,8 +559,52 @@ public class CustomerController : Controller
 
     #endregion
 
-    #region Private Methods
 
+    #region Image Retrieval
+    [HttpGet]
+    public async Task<IActionResult> Image(string fileName)
+    {
+        try
+        {
+            if (string.IsNullOrWhiteSpace(fileName))
+            {
+                return NotFound();
+            }
+
+            var image = await _webClient.GetFileAsync(
+                $"/api/customer/image/{Uri.EscapeDataString(fileName)}");
+
+            if (image == null || image.Length == 0)
+            {
+                return NotFound();
+            }
+
+            var extension = Path.GetExtension(fileName)
+                .ToLowerInvariant();
+
+            var contentType = extension switch
+            {
+                ".jpg" or ".jpeg" => "image/jpeg",
+                ".png" => "image/png",
+                ".gif" => "image/gif",
+                ".webp" => "image/webp",
+                _ => "application/octet-stream"
+            };
+
+            return File(image, contentType);
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(
+                ex,
+                "Exception in CustomerController Image.");
+
+            return NotFound();
+        }
+    }
+    #endregion
+
+    #region Private Methods
     private async Task LoadDropdowns(CustomerViewModel model)
     {
         var addresses = await _webClient

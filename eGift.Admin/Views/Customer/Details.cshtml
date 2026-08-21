@@ -171,10 +171,24 @@
                     </div>
 
                     <div class="col-md-9">
-                        <img src="@Model.ProfileImagePath" alt="Profile Image" class="img-thumbnail"
-                             style="max-width: 150px;" />
+                        <img src="@Url.Action(
+                         "Image",
+                         "Customer",
+                         new
+                         {
+                             fileName = System.IO.Path.GetFileName(
+                                 Model.ProfileImagePath)
+                         })" alt="Customer Profile" class="img-thumbnail" style="width:150px;
+                        height:150px;
+                        object-fit:cover;" />
                     </div>
                 </div>
+            }
+            else
+            {
+                <p class="text-muted">
+                    No profile image available.
+                </p>
             }
 
         </div>

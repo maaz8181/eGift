@@ -1,6 +1,8 @@
+using eGift.WebAPI.Common;
 using eGift.WebAPI.Data;
 using eGift.WebAPI.Dtos;
 using eGift.WebAPI.Mappings;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 
 namespace eGift.WebAPI.Endpoints;
@@ -84,10 +86,8 @@ public static class CustomerEndpoint
            join city in context.Cities on address.CityId equals city.Id
            join state in context.States on address.StateId equals state.Id
            join country in context.Countries on address.CountryId equals country.Id
-           join login in context.Logins on c.Id equals login.RefId into loginGroup
-
-           from login in loginGroup.DefaultIfEmpty()
-           where c.Id == id && !c.IsDeleted
+           join login in context.Logins on c.Id equals login.RefId
+           where c.Id == id && !c.IsDeleted && login.RefType == RefType.Customer.ToString()
            select new
            {
                Id = c.Id,
@@ -114,8 +114,9 @@ public static class CustomerEndpoint
 
                IsDefault = c.IsDefault,
                CreatedDate = c.CreatedDate,
-               LastLogin = login != null
-                ? login.LastLoginDate : null
+               UserName = login.UserName,
+               LastLogin = login.LastLoginDate,
+               LoginId = login.Id
            }
        )
        .AsNoTracking()
@@ -144,13 +145,54 @@ public static class CustomerEndpoint
         });
 
         // POST: api/customer
-        group.MapPost("/", async (CustomerDto dto, AppDBContext context, ILoggerFactory loggerFactory) =>
+        group.MapPost("/", async (
+            [FromForm] CustomerDto dto,
+            AppDBContext context,
+            ILoggerFactory loggerFactory,
+            IWebHostEnvironment environment) =>
+
         {
             var logger = loggerFactory.CreateLogger("CustomerEndpoint");
 
             try
             {
                 var customer = dto.ToEntity();
+
+                // Create upload folder
+                var uploadFolder = Path.Combine(
+                    environment.ContentRootPath,
+                    "uploads",
+                    "customers");
+
+                if (!Directory.Exists(uploadFolder))
+                {
+                    Directory.CreateDirectory(uploadFolder);
+                }
+
+                // Save image
+                if (dto.ProfileImage != null &&
+                    dto.ProfileImage.Length > 0)
+                {
+                    var extension = Path.GetExtension(
+                        dto.ProfileImage.FileName);
+
+                    var fileName = $"{Guid.NewGuid()}{extension}";
+
+                    var filePath = Path.Combine(
+                        uploadFolder,
+                        fileName);
+
+                    await using var stream =
+                        new FileStream(
+                            filePath,
+                            FileMode.Create);
+
+                    await dto.ProfileImage.CopyToAsync(stream);
+
+                    // Store relative path in database
+                    customer.ProfileImagePath =
+                        $"/uploads/customers/{fileName}";
+                }
 
                 context.Customers.Add(customer);
                 await context.SaveChangesAsync();
@@ -176,10 +218,15 @@ public static class CustomerEndpoint
                     statusCode: StatusCodes.Status500InternalServerError
                 );
             }
-        });
+        }).DisableAntiforgery();
 
         // PUT: api/customer/{id}
-        group.MapPut("/{id:int}", async (int id, EditCustomerDto dto, AppDBContext context, ILoggerFactory loggerFactory) =>
+        group.MapPut("/{id:int}", async (
+            int id,
+            [FromForm] EditCustomerDto dto,
+            AppDBContext context,
+            ILoggerFactory loggerFactory,
+            IWebHostEnvironment environment) =>
         {
             var logger = loggerFactory.CreateLogger("CustomerEndpoint");
 
@@ -193,6 +240,37 @@ public static class CustomerEndpoint
                 }
 
                 existingCustomer.ToEntity(dto);
+
+                // Upload new image
+                if (dto.ProfileImage != null &&
+                    dto.ProfileImage.Length > 0)
+                {
+                    var uploadFolder = Path.Combine(
+                        environment.ContentRootPath,
+                        "uploads",
+                        "customers");
+
+                    Directory.CreateDirectory(uploadFolder);
+
+                    var extension = Path.GetExtension(
+                        dto.ProfileImage.FileName);
+
+                    var fileName = $"{Guid.NewGuid()}{extension}";
+
+                    var filePath = Path.Combine(
+                        uploadFolder,
+                        fileName);
+
+                    await using var stream =
+                        new FileStream(
+                            filePath,
+                            FileMode.Create);
+
+                    await dto.ProfileImage.CopyToAsync(stream);
+
+                    existingCustomer.ProfileImagePath =
+                        $"/uploads/customers/{fileName}";
+                }
 
                 context.Customers.Update(existingCustomer);
                 await context.SaveChangesAsync();
@@ -217,7 +295,7 @@ public static class CustomerEndpoint
                     statusCode: StatusCodes.Status500InternalServerError
                 );
             }
-        });
+        }).DisableAntiforgery();
 
         // DELETE: api/customer/{id}?loginUserId={loginUserId}&deletedDate={deletedDate}
         group.MapDelete("/{id:int}", async (int id, int loginUserId, DateTime deletedDate, AppDBContext context, ILoggerFactory loggerFactory) =>
@@ -260,6 +338,48 @@ public static class CustomerEndpoint
                     statusCode: StatusCodes.Status500InternalServerError
                 );
             }
+        });
+
+        #endregion
+
+        #region Image Endpoints
+
+        group.MapGet("/image/{fileName}", (
+            string fileName,
+            IWebHostEnvironment environment) =>
+        {
+            if (fileName != Path.GetFileName(fileName))
+            {
+                return Results.BadRequest();
+            }
+
+            var uploadFolder = Path.Combine(
+                environment.ContentRootPath,
+                "uploads",
+                "customers");
+
+            var filePath = Path.Combine(
+                uploadFolder,
+                fileName);
+
+            if (!File.Exists(filePath))
+            {
+                return Results.NotFound();
+            }
+
+            var extension = Path.GetExtension(fileName)
+                .ToLowerInvariant();
+
+            var contentType = extension switch
+            {
+                ".jpg" or ".jpeg" => "image/jpeg",
+                ".png" => "image/png",
+                ".gif" => "image/gif",
+                ".webp" => "image/webp",
+                _ => "application/octet-stream"
+            };
+
+            return Results.File(filePath, contentType);
         });
 
         #endregion

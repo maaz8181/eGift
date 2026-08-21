@@ -7,27 +7,26 @@ public static class CustomerMapping
     // Entity -> DTO
     public static CustomerDto ToDto(this CustomerModel entity)
     {
-        return new CustomerDto(
-           entity.Id,
-            entity.FirstName,
-            entity.LastName,
-            entity.DateofBirth,
-            entity.GenderId,
-            entity.Mobile,
-            entity.Email,
-            entity.AddressId,
-            entity.IsActive,
-            entity.ProfileImagePath,
-            entity.ProfileImageData,
-            entity.RoleId,
-            entity.IsDefault,
-            entity.IsDeleted,
-            entity.CreatedBy,
-            entity.CreatedDate
-        )
+        return new CustomerDto
         {
+            Id = entity.Id,
+            FirstName = entity.FirstName,
+            LastName = entity.LastName,
+            DateofBirth = entity.DateofBirth,
+            GenderId = entity.GenderId,
+            Mobile = entity.Mobile,
+            Email = entity.Email,
+            AddressId = entity.AddressId,
+            IsActive = entity.IsActive,
+            ProfileImagePath = entity.ProfileImagePath,
+            ProfileImageData = entity.ProfileImageData,
+            RoleId = entity.RoleId,
+            IsDefault = entity.IsDefault,
+            IsDeleted = entity.IsDeleted,
+            CreatedBy = entity.CreatedBy,
+            CreatedDate = entity.CreatedDate,
             ProfileImage = entity.ProfileImage
-        }; ;
+        };
     }
 
     // DTO -> Entity (create)
@@ -65,8 +64,6 @@ public static class CustomerMapping
         entity.Email = dto.Email;
         entity.AddressId = dto.AddressId;
         entity.IsActive = dto.IsActive;
-        entity.ProfileImagePath = dto.ProfileImagePath;
-        entity.ProfileImageData = dto.ProfileImageData;
         entity.RoleId = dto.RoleId;
         entity.IsDefault = dto.IsDefault;
         entity.IsDeleted = dto.IsDeleted;
